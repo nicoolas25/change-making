@@ -5,11 +5,21 @@ class Change
   def self.rec_coin(total_amount, coin_types)
     return 0 if total_amount.zero?
     return 1 if coin_types.any? { |t| t == total_amount }
-    raise StandardError unless coin_types.min <= total_amount
+    begin
+      raise StandardError unless coin_types.min <= total_amount
 
-    eligible_coins = coin_types.select { |t| t <= total_amount }
-    biggest_coin = eligible_coins.max
-    1 + rec_coin(total_amount - biggest_coin, coin_types)
+      eligible_coins = coin_types
+        .select { |t| t <= total_amount }
+        .sort
+
+      biggest_coin = eligible_coins.pop
+
+      1 + rec_coin(total_amount - biggest_coin, coin_types)
+    rescue
+      second_biggest_coin = eligible_coins.pop
+
+      1 + rec_coin(total_amount - second_biggest_coin, coin_types)
+    end
   end
 
 end
@@ -34,6 +44,10 @@ class ChangeTest < MiniTest::Test
 
   def test_recursivity
     assert_equal(2, Change.rec_coin(3, [1, 2]))
+  end
+
+  def test_complex_recursivity
+    assert_equal(2, Change.rec_coin(4, [2, 3]))
   end
 
 end
