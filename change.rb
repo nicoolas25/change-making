@@ -50,4 +50,8 @@ class ChangeTest < MiniTest::Test
     assert_equal(2, Change.rec_coin(4, [2, 3]))
   end
 
+  def test_step_4
+    assert_equal(9, Change.rec_coin(18, [17, 15, 2]))
+  end
+
 end
